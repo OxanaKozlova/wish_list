@@ -1,0 +1,39 @@
+nelmio_api_doc:
+    documentation:
+        info:
+            title: Wish List App
+            description: This is an awesome app!
+            version: 1.0.0
+        components:
+            schemas:
+                WishListForm:
+                    type: object
+                    properties:
+                        wish_list:
+                            type: object
+                            properties:
+                                title:
+                                    type: string
+                                products:
+                                    type: array
+                                    description: Array of products ids
+                                    items:
+                                        type: integer
+                                        description: Id of product
+                LoginForm:
+                    type: object
+                    properties:
+                        username:
+                            type: string
+                        password:
+                            type: string
+            securitySchemes:
+                Bearer:
+                    type: http
+                    scheme: bearer
+                    bearerFormat: JWT
+        security:
+            - Bearer: []
+    areas: # to filter documented areas
+        path_patterns:
+            - ^/api(?!/doc$) # Accepts routes under /api except /api/doc

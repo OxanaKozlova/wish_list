@@ -1,0 +1,47 @@
+version: "3.5"
+
+services:
+  db:
+    image: mysql:5.7
+    restart: always
+    volumes:
+      - ${DATABASE_VOLUME:-db_volume}:/var/lib/mysql:cached
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+      MYSQL_ROOT_HOST: "%"
+
+  app:
+    env_file:
+      - ./.env
+    build: docker/app
+    working_dir: ${WORKING_DIR}
+    volumes:
+      - ./:${WORKING_DIR}
+    links:
+      - db
+
+  nginx:
+    build: docker/nginx
+    ports:
+      - ${NGINX_PORT}:80
+    working_dir: ${WORKING_DIR}
+    volumes:
+      - ./:${WORKING_DIR}
+    links:
+      - db
+      - app
+
+  phpmyadmin:
+    env_file:
+      - ./.env
+    image: phpmyadmin/phpmyadmin:latest
+    ports:
+      - ${PHPMYADMIN_PORT}:80
+    volumes:
+      - ./:${WORKING_DIR}
+    links:
+      - db
+
+volumes:
+  db_volume:
